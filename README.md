@@ -1,14 +1,17 @@
+# Child of Light
 
-This is a mod for changing your spell
-Fire Ball 2 to Abs Orb
-Scream 2 to Abs beam sweeper
-and add some effect for focus and Quake:
-add HKPrime's blast for focus
-add floor spikes for Quake 2
+A mod empowering players with radiant spell for those who seek the binding light that plagues our dreams.
 
-and some charms will have extra effect
-such as shaman stone for take extra damage
-or deep focus for make blast larger
+## Feature list
 
-Your origin spell (Fire ball,Scream) will not allow to use.
-this mod can safely uninstall, dont fair your spell will gone.
++ Focus produces a Sunlight Blast
++ Fireballs are replaced by Randiant Orbs
++ Screams become a Wall of Light
++ Descending Dark produces Floor Spikes
+
+## Installation
+
+1.5 Only
+
++ Install the [modding API](https://github.com/hk-modding/api) (if you're already using Scarab, you can skip this step)
++ Download the latest release and drag-and-drop the ChildOfLight folder containing ChildOfLight.dll into Hollow Knight/Hollow Knight_Data/Managed/Mods
