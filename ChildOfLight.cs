@@ -8,12 +8,12 @@ using System.Security.Cryptography;
 using GlobalEnums;
 using HutongGames.PlayMaker;
 using HutongGames.PlayMaker.Actions;
-using ModCommon.Util;
 using Modding;
 using UnityEngine;
+
 namespace ChildOfLight
 {
-    public class ChildOfLight : Mod,ITogglableMod
+    public class ChildOfLight : Mod
     {
         GameObject orbPre;
         GameObject ShotCharge;
@@ -60,10 +60,9 @@ namespace ChildOfLight
             #endregion
 
             #region Hooks
-            ModHooks.Instance.AfterSavegameLoadHook += ApplyTrigger;
-            GameManager.instance.StartCoroutine(WaitSetup(()=> ModHooks.Instance.CharmUpdateHook += Instance_CharmUpdateHook));
+            ModHooks.AfterSavegameLoadHook += ApplyTrigger;
+            GameManager.instance.StartCoroutine(WaitSetup(()=> ModHooks.CharmUpdateHook += Instance_CharmUpdateHook));
             #endregion
-
  
         }
 
@@ -91,8 +90,8 @@ namespace ChildOfLight
         }
         public void Unload()
         {
-            ModHooks.Instance.AfterSavegameLoadHook -= ApplyTrigger;
-            ModHooks.Instance.CharmUpdateHook -= Instance_CharmUpdateHook;
+            ModHooks.AfterSavegameLoadHook -= ApplyTrigger;
+            ModHooks.CharmUpdateHook -= Instance_CharmUpdateHook;
         }
 
         public override string GetVersion()
@@ -123,7 +122,6 @@ namespace ChildOfLight
             });
 
             spellctrl.InsertAction("Scream Get?", new EndAction(() => {
-                //FSMUtility.SendEventToGameObject(BeamSweeper, "BEAM SWEEP R2");
                 var beamctrl = BeamSweeper.LocateMyFSM("Control");
                 beamctrl.SetState("Beam Sweep R 2");
                 HeroController.instance.TakeMP(33);
@@ -165,9 +163,9 @@ namespace ChildOfLight
                     dmgAmount -= 1;
                     pos.y += 1.1f;
                 }
-                if ((PlayerData.instance.equippedCharm_8) || (PlayerData.instance.equippedCharm_9) || (PlayerData.instance.equippedCharm_27))
+                if (PlayerData.instance.equippedCharm_8 || PlayerData.instance.equippedCharm_9 || PlayerData.instance.equippedCharm_27)
                 {
-                    n += (PlayerData.instance.healthBlue / 2);
+                    n += PlayerData.instance.healthBlue / 2;
                 }
                 SpikePre.transform.localScale = scale;
                 SpikePre.GetComponent<DamageEnemies>().damageDealt = dmgAmount;
@@ -182,7 +180,7 @@ namespace ChildOfLight
         private void SetupOrb()
         {
             var orb = orbPre;
-            orb.layer = 17;   //PhysLayers.HERO_ATTACK
+            orb.layer = 17;   // PhysLayers.HERO_ATTACK
             AddDamageEnemy(orb);
 
             var orbcontrol = orb.LocateMyFSM("Orb Control");
@@ -248,17 +246,14 @@ namespace ChildOfLight
                     finishEvent = dispateevent
                 },
             };
-            //orbcontrol.SetState("Chase Enemy");
 
             orbcontrol.GetAction<Wait>("Impact", 7).time = 0.1f;
-            //orb.AddComponent<MyChaseObject>();
             orbcontrol.Fsm.SaveActions();
 
             setupDone++;
         }
         private void SetupBlast()
         {
-            //HKBlast.transform.SetParent(HeroController.instance.transform);
             HKBlast.transform.position = HeroController.instance.transform.position;
             GameObject blast;
             var fsm = HKBlast.LocateMyFSM("Control");
@@ -275,7 +270,6 @@ namespace ChildOfLight
             blast.layer = (int)PhysLayers.HERO_ATTACK;
             damager.gameObject.layer = (int)PhysLayers.HERO_ATTACK;
 
-            //AddDamageEnemy(HKBlast);
             AddDamageEnemy(damager.gameObject).circleDirection = true;
 
             blastAction.gameObject.GameObject.Value = blast;
@@ -373,14 +367,6 @@ namespace ChildOfLight
             beamctrl.Fsm.SaveActions();
             BeamSweeper.SetActive(true);
 
-            /*try
-            {
-                FSMUtility.SendEventToGameObject(BeamSweeper, "BEAM SWEEP R2");
-            }
-            catch
-            {
-
-            }*/
             setupDone++;
         }
         private void SetupSpike()
@@ -427,7 +413,7 @@ namespace ChildOfLight
             em.enabled = true;
             em2.enabled = true;
 
-            if(PlayerData.instance!=null&&PlayerData.instance.equippedCharm_33)
+            if(PlayerData.instance != null && PlayerData.instance.equippedCharm_33)
             {
                 yield return new WaitForSeconds(0.2f);
             }
@@ -442,21 +428,16 @@ namespace ChildOfLight
             {
                 if (PlayerData.instance.equippedCharm_11)
                 {
-                    //MaterialPropertyBlock _propblock = new MaterialPropertyBlock();
                     var scale = orb.transform.localScale;
                     scale.x *= 0.5f;
                     scale.y *= 0.5f;
                     yield return new WaitForSeconds(0.5f);
                     var another_orb = orbPre.Spawn(spawnPoint);
-                    //_propblock.SetColor("_Color", Color.blue);
-                    //another_orb.GetComponent<Renderer>().SetPropertyBlock(_propblock);
                     another_orb.AddComponent<OrbChaseObject>();
                     another_orb.SetActive(true);
                     another_orb.transform.localScale = scale;
                     yield return new WaitForSeconds(0.3f);
                     another_orb = orbPre.Spawn(spawnPoint);
-                    //_propblock.SetColor("_Color", Color.green);
-                    //another_orb.GetComponent<Renderer>().SetPropertyBlock(_propblock);
                     another_orb.AddComponent<OrbChaseObject>();
                     another_orb.SetActive(true);
                     another_orb.transform.localScale = scale;
@@ -478,8 +459,6 @@ namespace ChildOfLight
         }
         private bool AddSpikeToPool(int n = 10, float spacing = 0.8f)
         {
-            /*foreach (var s in _spikes)
-                UnityEngine.Object.Destroy(s);*/
             _spikes.Clear();
 
             float x = -1 * ((n * spacing) / 2);
@@ -496,9 +475,6 @@ namespace ChildOfLight
         }
         public DamageEnemies AddDamageEnemy(GameObject go)
         {
-            //var template = HeroController.instance.slashAltPrefab.LocateMyFSM("damages_enemy");
-
-            //AddFsmBySource(go, template);
             var dmg = go.AddComponent<DamageEnemies>();
             dmg.attackType = AttackTypes.Spell;
             dmg.circleDirection = false;
@@ -523,7 +499,7 @@ namespace ChildOfLight
                 orbPre.GetComponent<DamageEnemies>().attackType = AttackTypes.Spell;
             }
 
-            if (PlayerData.instance.equippedCharm_19) // 萨满
+            if (PlayerData.instance.equippedCharm_19)
             {
 
                 var beamctrl = BeamSweeper.LocateMyFSM("Control");

@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 using UnityEngine;
 using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 
@@ -49,10 +48,6 @@ namespace ChildOfLight
             }
 
         }
-        /*public static void debugPrint(HealthManager target)
-        {
-            Log($"[{target.name}][{target.isActiveAndEnabled},{target.gameObject.GetComponent<Collider2D>()?.isTrigger}]{target.hp},{target.hasSpecialDeath},{target.deathReset},{target.damageOverride},{target.isDead},{target.InvincibleFromDirection},{target.IsInvincible}");
-        }*/
         private static bool searchActiveEnemy(HealthManager hm)
         {
             if (hm == null || (!hm.gameObject.activeSelf) || hm.isDead)
@@ -135,50 +130,50 @@ namespace ChildOfLight
     {
         public override void Reset()
         {
-            this.gameObject = null;
-            this.spawnPoint = null;
-            this.position = new FsmVector3
+            gameObject = null;
+            spawnPoint = null;
+            position = new FsmVector3
             {
                 UseVariable = true
             };
-            this.rotation = new FsmVector3
+            rotation = new FsmVector3
             {
                 UseVariable = true
             };
-            this.frequency = null;
+            frequency = null;
         }
         public override void OnUpdate()
         {
-            this.timer += Time.deltaTime;
-            if (this.timer >= this.frequency.Value)
+            timer += Time.deltaTime;
+            if (timer >= frequency.Value)
             {
-                this.timer = 0f;
-                GameObject value = this.gameObject.Value;
+                timer = 0f;
+                GameObject value = gameObject.Value;
                 if (value != null)
                 {
                     Vector3 a = Vector3.zero;
                     Vector3 euler = Vector3.up;
-                    if (this.spawnPoint.Value != null)
+                    if (spawnPoint.Value != null)
                     {
-                        a = this.spawnPoint.Value.transform.position;
-                        if (!this.position.IsNone)
+                        a = spawnPoint.Value.transform.position;
+                        if (!position.IsNone)
                         {
-                            a += this.position.Value;
+                            a += position.Value;
                         }
-                        euler = (this.rotation.IsNone ? this.spawnPoint.Value.transform.eulerAngles : this.rotation.Value);
+                        euler = (rotation.IsNone ? spawnPoint.Value.transform.eulerAngles : rotation.Value);
                     }
                     else
                     {
-                        if (!this.position.IsNone)
+                        if (!position.IsNone)
                         {
-                            a = this.position.Value;
+                            a = position.Value;
                         }
-                        if (!this.rotation.IsNone)
+                        if (!rotation.IsNone)
                         {
-                            euler = this.rotation.Value;
+                            euler = rotation.Value;
                         }
                     }
-                    if (this.gameObject != null)
+                    if (gameObject != null)
                     {
                         try
                         {
