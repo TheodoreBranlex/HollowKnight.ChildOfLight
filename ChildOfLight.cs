@@ -390,8 +390,6 @@ namespace ChildOfLight
         }
         public IEnumerator SpawnOrb()
         {
-
-
             var spawnPoint = new Vector3(HeroController.instance.transform.position.x + UnityEngine.Random.Range(-2, 2), HeroController.instance.transform.position.y + 2 + UnityEngine.Random.Range(-3, 2));
             var ShotCharge = GameObject.Instantiate(this.ShotCharge);
             var ShotCharge2 = GameObject.Instantiate(this.ShotCharge2);
@@ -405,35 +403,32 @@ namespace ChildOfLight
             em2.enabled = true;
 
             if(PlayerData.instance != null && PlayerData.instance.equippedCharm_33)
-            {
                 yield return new WaitForSeconds(0.2f);
-            }
             else
-            {
                 yield return new WaitForSeconds(0.8f);
-            }
-            var orb = orbPre.Spawn(spawnPoint);
+            var orb = orbPre.Spawn();
+            orb.transform.position = spawnPoint;
 
             orb.AddComponent<OrbChaseObject>();
-            if (PlayerData.instance != null)
+            if (PlayerData.instance != null  && PlayerData.instance.equippedCharm_11)
             {
-                if (PlayerData.instance.equippedCharm_11)
-                {
-                    var scale = orb.transform.localScale;
-                    scale.x *= 0.5f;
-                    scale.y *= 0.5f;
-                    yield return new WaitForSeconds(0.5f);
-                    var another_orb = orbPre.Spawn(spawnPoint);
-                    another_orb.AddComponent<OrbChaseObject>();
-                    another_orb.SetActive(true);
-                    another_orb.transform.localScale = scale;
-                    yield return new WaitForSeconds(0.3f);
-                    another_orb = orbPre.Spawn(spawnPoint);
-                    another_orb.AddComponent<OrbChaseObject>();
-                    another_orb.SetActive(true);
-                    another_orb.transform.localScale = scale;
+                var scale = orb.transform.localScale;
+                scale.x *= 0.5f;
+                scale.y *= 0.5f;
+                yield return new WaitForSeconds(0.5f);
 
-                }
+                var another_orb = orbPre.Spawn();
+                another_orb.transform.position = spawnPoint;
+                another_orb.AddComponent<OrbChaseObject>();
+                another_orb.SetActive(true);
+                another_orb.transform.localScale = scale;
+                yield return new WaitForSeconds(0.3f);
+
+                another_orb = orbPre.Spawn();
+                another_orb.transform.position = spawnPoint;
+                another_orb.AddComponent<OrbChaseObject>();
+                another_orb.SetActive(true);
+                another_orb.transform.localScale = scale;
             }
             orb.SetActive(true);
 
@@ -444,9 +439,7 @@ namespace ChildOfLight
         {
             AddSpikeToPool(n, spacing);
             foreach (var s in _spikes)
-            {
                 s.LocateMyFSM("Control").SendEvent("HEROSPIKEUP");
-            }
         }
         private bool AddSpikeToPool(int n = 10, float spacing = 0.8f)
         {

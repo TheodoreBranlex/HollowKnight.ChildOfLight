@@ -28,9 +28,7 @@ namespace ChildOfLight
             {
                 var t = targets[i];
                 if (!searchActiveEnemy(t))
-                {
                     targets.Remove(t);
-                }
             }
             if(targets.Count>0)
             {
@@ -42,9 +40,7 @@ namespace ChildOfLight
                     target = targets[selected];
                 }
                 else
-                {
                     target = best;
-                }
             }
 
         }
@@ -77,18 +73,14 @@ namespace ChildOfLight
                     var cur_factor = (-0.05f)*hp + distance;
                     var coll = hm.gameObject.GetComponent<Collider2D>();
                     if(coll && coll.isTrigger)
-                    {
                         cur_factor += 100;
-                    }
                     if(cur_factor>0 && cur_factor<min_factor && !hm.deathReset)
                     {
                         min_factor = cur_factor;
                         best = hm;
                     }
                     if(!hm.hasSpecialDeath)
-                    {
                         return hm;
-                    }
                 }
                 return best;
             }
@@ -98,9 +90,7 @@ namespace ChildOfLight
             yield return new WaitUntil(() =>
             {
                 if (target != null && target.gameObject.activeSelf && !target.isDead && !target.IsInvincible)
-                {
                     return true;
-                }
                 target = FindObjectOfType<HealthManager>();
                 return false;
             });
@@ -157,33 +147,20 @@ namespace ChildOfLight
                     {
                         a = spawnPoint.Value.transform.position;
                         if (!position.IsNone)
-                        {
                             a += position.Value;
-                        }
-                        euler = (rotation.IsNone ? spawnPoint.Value.transform.eulerAngles : rotation.Value);
+                        euler = rotation.IsNone ? spawnPoint.Value.transform.eulerAngles : rotation.Value;
                     }
                     else
                     {
                         if (!position.IsNone)
-                        {
                             a = position.Value;
-                        }
                         if (!rotation.IsNone)
-                        {
                             euler = rotation.Value;
-                        }
                     }
                     if (gameObject != null)
                     {
-                        try
-                        {
-                            GameObject gameObject = this.gameObject.Value.Spawn(a, Quaternion.Euler(euler));
-                            gameObject.SetActive(true);
-                        }
-                        catch
-                        {
-                            //Modding.Logger.LogDebug("Ignore this exception");
-                        }
+                        GameObject gameObject = this.gameObject.Value.Spawn(a, Quaternion.Euler(euler));
+                        gameObject.SetActive(true);
                     }
                 }
             }
